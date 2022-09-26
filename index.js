@@ -1,12 +1,19 @@
 const express = require('express');
 const productosRoutes = require("./api/routes/productos");
+const chartRoutes = require("./api/routes/carrito");
 const app = express();
 
 
+app.use(express.urlencoded({extended:true}));
+app.use(express.json());
+app.use(express.static('api'));
 const context = process.env.CONTEXT || 'api';
-app.use('/api/productos', productosRoutes);
-app.use("/",express.static("api"));
+app.use('/api/', productosRoutes);
+app.use('/api/', chartRoutes);
 
+app.get('/', (req,res)=>{
+    res.send("Main page")
+})
 
 
 const port = process.env.PORT || 8080;
