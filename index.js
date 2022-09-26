@@ -2,9 +2,12 @@ const express = require('express');
 const productosRoutes = require("./api/routes/productos");
 const app = express();
 
-//app.use(express.json());
+
 const context = process.env.CONTEXT || 'api';
 app.use('/api/productos', productosRoutes);
+app.use("/",express.static("api"));
+
+
 
 const port = process.env.PORT || 8080;
 
