@@ -2,6 +2,7 @@ const express = require('express');
 const productosRoutes = require("./api/routes/productos");
 const chartRoutes = require("./api/routes/carrito");
 const app = express();
+const port = process.env.PORT || 8080;
 
 
 app.use(express.urlencoded({extended:true}));
@@ -16,7 +17,7 @@ app.get('/', (req,res)=>{
 })
 
 
-const port = process.env.PORT || 8080;
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
