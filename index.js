@@ -9,8 +9,8 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static('api'));
 const context = process.env.CONTEXT || 'api';
-app.use('/api/', productosRoutes);
-app.use('/api/', chartRoutes);
+app.use('/api/productos', productosRoutes);
+app.use('/api/chart', chartRoutes);
 
 app.get('/', (req,res)=>{
     res.send("Main page")
@@ -22,3 +22,4 @@ app.get('/', (req,res)=>{
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });
+

@@ -1,27 +1,37 @@
 const express = require('express');
-const Productos = require('../controllers/productos');
-const productosController = new Productos; 
+const productosController = require('../controllers/productos'); 
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    productosController.getAll(req, res);
+    const response = productosController.getAll();
+    res.send(response);
+    
 });
 
 router.get('/:id', (req, res) => {
-    productosController.getById(req, res);
+    productosController.getById(req, res);   
 });
 
 router.post('/', (req, res) => {
-    res.send('POST');
+    const producto = req.body;
+    productosController.save(producto)
 });
 
-router.put('/', (req, res) => {
-    res.send('PUT');
+router.put('/:id', (req, res) => {
+    const producto = req.body;
+    let id= req.params;
+    id = parseInt(id.id)
+    const updateProduct = 
+    productosController.updateById(id,producto)
+    .then((data) => res.send(data))    
 });
 
-router.delete('/', (req, res) => {
-    res.send('DELETE');
+router.delete('/:id', (req, res) => {
+    let params = req.params;
+    params = parseInt(params.id)
+    const allProducts = productosController.deleteById(params)
+    .then((data) => res.send(data));
 });
 
 module.exports = router;
