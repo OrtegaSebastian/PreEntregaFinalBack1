@@ -3,35 +3,34 @@ const productosController = require('../controllers/productos');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    const response = productosController.getAll();
+router.get('/', async (req, res) => {
+    const response = await productosController.getAll();
     res.send(response);
-    
 });
 
-router.get('/:id', (req, res) => {
-    productosController.getById(req, res);   
+router.get('/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    const response = await productosController.getById(id);
+    res.send(response);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const producto = req.body;
-    productosController.save(producto)
+    const response = await productosController.save(producto);
+    res.send(response);
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const producto = req.body;
-    let id= req.params;
-    id = parseInt(id.id)
-    const updateProduct = 
-    productosController.updateById(id,producto)
-    .then((data) => res.send(data))    
+    const id = parseInt(req.params.id);
+    const response = await productosController.updateById(id, producto);
+    res.send(response);
 });
 
-router.delete('/:id', (req, res) => {
-    let params = req.params;
-    params = parseInt(params.id)
-    const allProducts = productosController.deleteById(params)
-    .then((data) => res.send(data));
+router.delete('/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    const response = await productosController.deleteById(id);
+    res.send(response);
 });
 
 module.exports = router;

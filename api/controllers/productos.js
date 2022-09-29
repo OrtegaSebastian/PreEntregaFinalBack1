@@ -4,85 +4,84 @@ const path = require('path');
     
 // save(Object): Number - Recibe un objeto, lo guarda en el file, devuelve el id asignado.
 const save = async (objProduct)  =>{
+    let productos = [];
     const data = await fs.promises.readFile(path.resolve(__dirname, `${filename}`),"utf-8")
     if(data){
-    const products = JSON.parse(data);
-    const id = products.length +1;
+        productos = JSON.parse(data);
+        const id = productos.length +1;
         objProduct.id = id;     
-        products.push(objProduct);
-            const productsString = JSON.stringify(products);
+        productos.push(objProduct);
+            const productsString = JSON.stringify(productos);
             await fs.promises.writeFile(path.resolve(__dirname, `${filename}`), productsString);
-            return products;
+            return objProduct;
         }
         else{
             objProduct.id = 1;
-            this.product.push(objProduct);
-            const productsString = JSON.stringify(this.product);
+            productos.push(objProduct);
+            const productsString = JSON.stringify(productos);
             await fs.promises.writeFile(path.resolve(__dirname, `${filename}`), productsString);
+            return objProduct;
         }      
 }
 
 // Metodo getById(Number)
 const getById = async (id) => {
-    if (fs.existsSync(filename)){
-        const data = fs.readFileSync(`${filename}`, 'utf-8');
+    if (fs.existsSync(path.resolve(__dirname, `${filename}`))){
+        const data = fs.readFileSync(path.resolve(__dirname, `${filename}`), 'utf-8');
         const dataParseada = JSON.parse(data);
-        const objeto = dataParseada.filter((objeto) => objeto.id === id);
-        return objeto;
+        if (dataParseada) {
+            const producto = dataParseada.find((producto) => producto.id == id);
+            if (producto) {
+                return producto;
+            }
+        }
     }
+    return {};
 }
 
 // Metodo getAll()
 const getAll = async () =>{
-    console.log(path.resolve(__dirname, `${filename}`));
-    if (fs.existsSync(filename)){
+    if (fs.existsSync(__dirname, `${filename}`)){
         const data = fs.readFileSync(path.resolve(__dirname, `${filename}`), 'utf-8');
-        console.log("getAll", data);
-        if (data) {
-            return data;
+        const dataParseada = JSON.parse(data);
+        if (dataParseada) {
+            return dataParseada;
         }else{
             return 'Not data Found';
         }
     }
-    
-    // return 'File not Found'; 
-    
+    return 'File not Found'; 
 }
 
 // Metodo deleteById(Number)
 const deleteById = async (id) => {
-    const data = fs.readFileSync(filename, "utf-8");
+    const data = fs.readFileSync(path.resolve(__dirname, `${filename}`), "utf-8");
     const dataParseada = JSON.parse(data);
     const dataFiltrada = dataParseada.filter((objeto) => objeto.id !== id);
     const dataString = JSON.stringify(dataFiltrada);
-    fs.writeFileSync(filename, dataString);
+    fs.writeFileSync(path.resolve(__dirname, `${filename}`), dataString);
     return dataFiltrada;
 }
 
-// Metodo deleteAll(Number)
-
-const deleteAll = async () => {
-fs.writeFileSync(this.archivo, "[]");
-return "[]";
-}
-
 // Metodo updateById(id, prodcut)
-
 const updateById = async (id, productNew)=> {
-            const data = fs.readFileSync(filename, "utf-8");
-            console.log(productNew);
-            let dataParseada = JSON.parse(data);
-            let productToUpdate = dataParseada.find((objeto) => objeto.id === id);
-            if (productToUpdate === undefined) {
-                throw { msg: "404 Not found" };
+    if (fs.existsSync(path.resolve(__dirname, `${filename}`))){
+        const data = fs.readFileSync(path.resolve(__dirname, `${filename}`), 'utf-8');
+        const dataParseada = JSON.parse(data);
+        if (dataParseada) {
+            const producto = dataParseada.find((producto) => producto.id == id);
+            if (producto) {
+                const productToUpdate = { id, ...productNew };
+                let productFiltered = dataParseada.filter((objeto) => objeto.id !== id);
+                productFiltered.push(productToUpdate);
+                const dataString = JSON.stringify(productFiltered);
+                console.log(dataString);
+                fs.writeFileSync(path.resolve(__dirname, `${filename}`), dataString);
+                return productToUpdate;
             }
-            let productFiltered = dataParseada.filter((objeto) => objeto.id !== id);
-            productToUpdate = { id, ...productNew };
-            productFiltered.push(productToUpdate);
-            const dataString = JSON.stringify(productFiltered);
-            console.log(productFiltered);
-            fs.writeFileSync(filename, dataString);
-            return "Product updated";
+        }
+    }
+    return {};
 }
 
 module.exports = {
@@ -90,7 +89,5 @@ module.exports = {
     getById,
     getAll,
     deleteById,
-    deleteAll,
     updateById
 };
-
